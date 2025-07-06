@@ -1,0 +1,4558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blush Bloom & Co.</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+    #enhanced-preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--dark-bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999999;
+    }
+
+    .loader-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+    }
+
+    .spinner-box {
+        width: 200px;
+        height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .medical-cross {
+        width: 100px;
+        height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    .cross-container {
+        position: relative;
+        width: 80px;
+        height: 80px;
+    }
+
+    .cross-horizontal,
+    .cross-vertical {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 8px;
+        animation: glow 1.5s ease-in-out infinite alternate;
+    }
+
+    .cross-horizontal {
+        width: 60px;
+        height: 15px;
+        background: linear-gradient(90deg, var(--primary-pink), var(--primary-purple));
+    }
+
+    .cross-vertical {
+        width: 15px;
+        height: 60px;
+        background: linear-gradient(180deg, var(--primary-pink), var(--primary-purple));
+    }
+
+    .cross-border {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90px;
+        height: 90px;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        animation: rotate 3s linear infinite;
+    }
+
+    .cross-border::before {
+        content: '';
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        right: -5px;
+        bottom: -5px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+        border-top-color: var(--primary-purple);
+        animation: rotate 2s linear infinite reverse;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.1);
+        }
+    }
+
+    @keyframes glow {
+        0% {
+            box-shadow: 0 0 10px var(--primary-pink);
+        }
+        100% {
+            box-shadow: 0 0 20px var(--primary-purple), 0 0 30px var(--primary-pink);
+        }
+    }
+
+    @keyframes rotate {
+        from {
+            transform: translate(-50%, -50%) rotate(0deg);
+        }
+        to {
+            transform: translate(-50%, -50%) rotate(360deg);
+        }
+    }
+
+    .loading-text {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .loading-text span {
+        color: var(--text-tertiary);
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.2rem;
+        font-weight: 500;
+        letter-spacing: 0.2rem;
+        animation: pulse-text 1.5s ease-in-out infinite;
+    }
+
+    .loading-text span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-text span:nth-child(3) { animation-delay: 0.4s; }
+    .loading-text span:nth-child(4) { animation-delay: 0.6s; }
+    .loading-text span:nth-child(5) { animation-delay: 0.8s; }
+    .loading-text span:nth-child(6) { animation-delay: 1s; }
+    .loading-text span:nth-child(7) { animation-delay: 1.2s; }
+
+    .please-wait {
+        color: var(--text-secondary);
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1rem;
+        font-weight: 500;
+        letter-spacing: 0.1rem;
+        margin-top: 2rem;
+        text-align: center;
+        animation: fadeInOut 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-text {
+        0%, 100% {
+            color: var(--text-tertiary);
+            transform: scale(1);
+        }
+        50% {
+            color: var(--text-primary);
+            transform: scale(1.1);
+        }
+    }
+
+    @keyframes fadeInOut {
+        0%, 100% {
+            opacity: 0.7;
+        }
+        50% {
+            opacity: 1;
+        }
+    }
+</style>
+</head>
+<body>
+    <div id="enhanced-preloader">
+        <div class="loader-container">
+            <div class="spinner-box">
+                <div class="medical-cross">
+                    <div class="cross-border"></div>
+                    <div class="cross-container">
+                        <div class="cross-horizontal"></div>
+                        <div class="cross-vertical"></div>
+                    </div>
+                </div>
+                <div class="loading-text">
+                    <span>L</span>
+                    <span>O</span>
+                    <span>A</span>
+                    <span>D</span>
+                    <span>I</span>
+                    <span>N</span>
+                    <span>G</span>
+                </div>
+            </div>
+            <div class="please-wait">PLEASE WAIT</div>
+        </div>
+    </div>
+
+    <script>
+        // Hide preloader when everything is loaded
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const preloader = document.getElementById('enhanced-preloader');
+                preloader.style.opacity = '0';
+                preloader.style.transition = 'opacity 0.5s ease';
+                
+                setTimeout(function() {
+                    preloader.style.display = 'none';
+                }, 500);
+            }, 3000); // Show for 3 seconds to demonstrate the animation
+        });
+    </script>
+
+    <script>
+        // Ultra optimized custom cursor with duplicate prevention
+        document.addEventListener('DOMContentLoaded', () => {
+          // First, eliminate ALL possible duplicate cursors 
+          // (including any that might be created by other scripts)
+          const removeAllCustomCursors = () => {
+            // Remove by ID
+            const cursorById = document.getElementById('custom-cursor-arrow');
+            if (cursorById) cursorById.remove();
+            
+            // Remove by classname
+            document.querySelectorAll('.custom-cursor-arrow').forEach(el => el.remove());
+            
+            // Remove anything that looks like a cursor
+            document.querySelectorAll('div[style*="cursor"]').forEach(el => {
+              if (el.id !== 'enhanced-preloader' && !el.classList.contains('search-overlay')) {
+                const styles = window.getComputedStyle(el);
+                if (styles.position === 'fixed' && styles.zIndex > 1000 && 
+                    (styles.width < '50px' || styles.height < '50px')) {
+                  el.remove();
+                }
+              }
+            });
+          };
+
+          // Remove any existing cursors immediately
+          removeAllCustomCursors();
+          
+          // Create cursor element with unique timestamp ID to avoid conflicts
+          const cursorId = `custom-cursor-${Date.now()}`;
+          const cursor = document.createElement('div');
+          cursor.id = cursorId;
+          
+          // Apply styles directly to the element for performance
+          cursor.style.cssText = `
+            position: fixed;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 20px solid white;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            pointer-events: none;
+            z-index: 2147483647;
+            opacity: 0;
+            transition: border-bottom-color 0.1s ease;
+            will-change: transform, left, top;
+          `;
+          
+          // Add to body and force to top of stacking context
+          document.body.appendChild(cursor);
+          
+          // Hide default cursor with minimal specificity
+          const styleSheet = document.createElement('style');
+          styleSheet.textContent = 'html, body, a, button, input { cursor: none !important; }';
+          document.head.appendChild(styleSheet);
+          
+          // Direct positioning for immediate response - no smoothing for max performance
+          let isActive = false;
+          
+          const updateCursor = (e) => {
+            if (!isActive) {
+              cursor.style.opacity = '1';
+              isActive = true;
+            }
+            
+            // Use transform for better performance
+            cursor.style.left = `${e.clientX}px`;
+            cursor.style.top = `${e.clientY}px`;
+            
+            // Simple clickable detection
+            const el = document.elementFromPoint(e.clientX, e.clientY);
+            const isClickable = el && (
+              el.tagName === 'A' || 
+              el.tagName === 'BUTTON' || 
+              window.getComputedStyle(el).cursor === 'pointer'
+            );
+            
+            cursor.style.borderBottomColor = isClickable ? '#ff9d9d' : 'white';
+            cursor.style.transform = `translate(-50%, -50%) rotate(-45deg) ${isClickable ? 'scale(1.2)' : 'scale(1)'}`;
+          };
+          
+          // Click effect
+          const handleMouseDown = () => {
+            cursor.style.transform = 'translate(-50%, -50%) rotate(-45deg) scale(0.8)';
+          };
+          
+          const handleMouseUp = () => {
+            const isClickable = cursor.style.borderBottomColor === 'rgb(255, 157, 157)';
+            cursor.style.transform = `translate(-50%, -50%) rotate(-45deg) ${isClickable ? 'scale(1.2)' : 'scale(1)'}`;
+          };
+          
+          // Mouse enter/leave document
+          const handleMouseEnter = () => {
+            cursor.style.opacity = '1';
+            isActive = true;
+          };
+          
+          const handleMouseLeave = () => {
+            cursor.style.opacity = '0';
+            isActive = false;
+          };
+          
+          // Attach event listeners with passive flag for performance
+          document.addEventListener('mousemove', updateCursor, { passive: true });
+          document.addEventListener('mousedown', handleMouseDown, { passive: true });
+          document.addEventListener('mouseup', handleMouseUp, { passive: true });
+          document.addEventListener('mouseenter', handleMouseEnter, { passive: true });
+          document.addEventListener('mouseleave', handleMouseLeave, { passive: true });
+          
+          // Final check - remove duplicates on window load
+          window.addEventListener('load', () => {
+            // Do another cleanup to ensure no duplicates
+            document.querySelectorAll(`div[id^="custom-cursor"]`).forEach(el => {
+              if (el.id !== cursorId) el.remove();
+            });
+            
+            // Reset the cursor position to current mouse position
+            document.addEventListener('mousemove', (e) => {
+              // One-time correction to ensure cursor is at right position
+              cursor.style.left = `${e.clientX}px`;
+              cursor.style.top = `${e.clientY}px`;
+              cursor.style.opacity = '1';
+            }, { once: true, passive: true });
+          });
+          
+          // Handle page visibility changes (tab switching)
+          document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') {
+              cursor.style.opacity = '0';
+            }
+          });
+        });
+    </script>
+
+ 
+
+ 
+
+
+
+    
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-pink: #ff9d9d;
+            --primary-purple: #CF9FFF;
+            --dark-bg: #0a0a0f;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --glow: 0 0 40px rgba(207, 159, 255, 0.3);
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(255, 157, 157, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(207, 159, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(255, 157, 157, 0.05) 0%, transparent 50%),
+                linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-size: clamp(14px, 1.5vw, 18px);
+        }
+
+        .container {
+            max-width: min(1400px, 95vw);
+            margin: 0 auto;
+            padding: 0 clamp(20px, 4vw, 60px);
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: transparent; /* transparent header */
+            backdrop-filter: blur(30px); /* optional: keep blur effect */
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            background: rgba(10, 10, 15, 0.95);
+            box-shadow: var(--shadow);  
+        }
+
+        nav {
+            position: relative; /* needed for absolute children */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: clamp(1rem, 2vw, 2rem) 0;
+        }
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* space between image and text */
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: none;
+    background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    transition: all 0.3s ease;
+}
+
+.logo-img {
+    width: 120px;  /* adjust as needed */
+    height: 60px;
+    object-fit: contain;
+}
+
+
+        .logo:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 20px rgba(207, 159, 255, 0.5));
+        }
+
+.nav-links {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  list-style: none;
+  gap: clamp(1.5rem, 3vw, 3rem);
+}
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--text-primary);
+            background: var(--glass-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(207, 159, 255, 0.2);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-links a:hover::after, .nav-links a.active::after {
+            width: 80%;
+        }
+        .logout-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+        }
+
+        .logout-link:hover {
+            color: var(--text-primary);
+            background: var(--glass-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(207, 159, 255, 0.2);
+        }
+
+        /* Logout Success Message */
+        .logout-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(15px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .logout-message.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .logout-message-content {
+            background: var(--card-bg);
+            backdrop-filter: blur(30px);
+            border-radius: 24px;
+            padding: 3rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transform: scale(0.8) translateY(50px);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .logout-message.active .logout-message-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .logout-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .logout-message h3 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .logout-message p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .loading-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            width: 0%;
+            transition: width 3s linear;
+            border-radius: 2px;
+        }
+
+        /* Main Content */
+        main {
+            padding-top: clamp(120px, 15vh, 150px);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: clamp(2rem, 3vh, 3rem) 0; /* reduced top & bottom padding */
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 8rem);
+            font-weight: 300;
+            margin-bottom: clamp(1rem, 3vh, 2rem);
+            line-height: 1.1;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        .hero-title .main-text {
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+            display: block;
+            filter: drop-shadow(0 0 30px rgba(207, 159, 255, 0.3));
+        }
+
+        .hero-title .sub-text {
+            color: var(--text-secondary);
+            font-weight: 200;
+            display: block;
+            margin-top: clamp(0.5rem, 1vh, 1rem);
+            font-size: clamp(2rem, 5vw, 5rem);
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.8rem);
+            color: var(--text-tertiary);
+            margin-bottom: clamp(3rem, 6vh, 6rem);
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.3s forwards;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        /* Contraceptive Methods Grid */
+        .contraceptive-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: clamp(1rem, 2vw, 1.5rem);
+            margin: clamp(2rem, 4vh, 4rem) 0;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.6s forwards;
+        }
+
+        .contraceptive-item {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: clamp(1.5rem, 3vw, 2rem);
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .contraceptive-item:nth-child(even) {
+            animation-delay: -3s;
+        }
+
+        .contraceptive-item:nth-child(3n) {
+            animation-delay: -1.5s;
+        }
+
+        .contraceptive-item:nth-child(4n) {
+            animation-delay: -4.5s;
+        }
+
+        .contraceptive-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .contraceptive-item:hover::before {
+            left: 100%;
+        }
+
+        .contraceptive-item:hover {
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: var(--glow);
+            border-color: var(--primary-purple);
+            background: rgba(255, 255, 255, 0.08);
+            animation-play-state: paused;
+        }
+
+        .contraceptive-icon {
+            font-size: clamp(2rem, 4vw, 3rem);
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: clamp(0.5rem, 1vh, 1rem);
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 0 20px rgba(207, 159, 255, 0.3));
+        }
+
+        .contraceptive-item:hover .contraceptive-icon {
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 30px rgba(207, 159, 255, 0.5));
+        }
+
+        .contraceptive-title {
+            font-size: clamp(0.8rem, 1.2vw, 1rem);
+            color: var(--text-primary);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+
+/* Add this to your existing CSS file */
+
+/* Chatbox Overlay */
+.chatbox-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.chatbox-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Chatbox Container */
+.chatbox-container {
+    width: 90%;
+    max-width: 500px;
+    height: 80vh;
+    max-height: 700px;
+    background: var(--card-bg);
+    backdrop-filter: blur(30px);
+    border-radius: 24px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: scale(0.8) translateY(50px);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+}
+
+.chatbox-overlay.active .chatbox-container {
+    transform: scale(1) translateY(0);
+}
+
+/* Chatbox Header */
+.chatbox-header {
+    padding: 1.5rem;
+    background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.chatbox-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.chatbox-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chatbox-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg);
+}
+
+/* Chatbox Content */
+.chatbox-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.chatbox-messages {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Message Styles */
+.bot-message, .user-message {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    max-width: 80%;
+    animation: slideIn 0.3s ease;
+}
+
+.user-message {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.message-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.user-message .message-avatar {
+    background: var(--glass-bg);
+    border: 1px solid var(--border-color);
+}
+
+.message-content {
+    background: var(--glass-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    padding: 1rem;
+    color: var(--text-primary);
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+.user-message .message-content {
+    background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+    color: white;
+}
+
+/* Quick Questions */
+.quick-questions {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 15px;
+    border: 1px solid var(--border-color);
+}
+
+.quick-questions h4 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.quick-question {
+    display: block;
+    width: 100%;
+    background: var(--glass-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+.quick-question:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--primary-purple);
+    transform: translateX(5px);
+}
+
+.quick-question:last-child {
+    margin-bottom: 0;
+}
+
+/* Typing Indicator */
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    max-width: 80%;
+}
+
+.typing-dots {
+    display: flex;
+    gap: 0.25rem;
+    padding: 1rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+}
+
+.typing-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--primary-purple);
+    animation: typing 1.5s infinite ease-in-out;
+}
+
+.typing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0%, 60%, 100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    30% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}
+
+/* Chatbox Input */
+.chatbox-input {
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.chatbox-input input {
+    flex: 1;
+    background: var(--glass-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 25px;
+    padding: 0.75rem 1rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.chatbox-input input:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 3px rgba(207, 159, 255, 0.2);
+}
+
+.chatbox-input input::placeholder {
+    color: var(--text-secondary);
+}
+
+.send-btn {
+    background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+    border: none;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.send-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(207, 159, 255, 0.4);
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Scrollbar Styling */
+.chatbox-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chatbox-messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chatbox-messages::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+.chatbox-messages::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-purple);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .chatbox-container {
+        width: 95%;
+        height: 90vh;
+        margin: 1rem;
+    }
+    
+    .chatbox-messages {
+        padding: 1rem;
+    }
+    
+    .chatbox-input {
+        padding: 1rem;
+    }
+    
+    .bot-message, .user-message {
+        max-width: 90%;
+    }
+}
+
+
+        /* Services Grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+
+            gap: clamp(1.5rem, 2vw, 2rem);
+            margin: clamp(4rem, 8vh, 8rem) 0;
+            opacity: 1;
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        .service-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: clamp(2rem, 4vw, 3rem);
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .service-card:hover::before {
+            left: 100%;
+        }
+
+        .service-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: var(--glow);
+            border-color: var(--primary-purple);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .service-icon {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: clamp(1rem, 2vh, 1.5rem);
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 0 20px rgba(207, 159, 255, 0.3));
+        }
+
+        .service-card:hover .service-icon {
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 30px rgba(207, 159, 255, 0.5));
+        }
+
+        .service-title {
+            font-size: clamp(1.2rem, 2vw, 1.6rem);
+            color: var(--text-primary);
+            margin-bottom: clamp(1rem, 2vh, 1.5rem);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .service-description {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-size: clamp(0.95rem, 1.3vw, 1.15rem);
+            opacity: 1;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        /* NEW FEATURES */
+        
+        /* 1. Interactive Progress Ring */
+        .progress-ring {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring circle {
+            fill: none;
+            stroke: var(--border-color);
+            stroke-width: 3;
+            stroke-dasharray: 157; /* 2πr where r=25 */
+            stroke-dashoffset: 157;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .progress-ring .progress {
+            stroke: var(--primary-purple);
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 10px rgba(207, 159, 255, 0.5));
+        }
+
+        .service-card:hover .progress-ring .progress {
+            stroke-dashoffset: 0;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* 2. Live Stats Counter */
+        .live-stats {
+            display: flex;
+            justify-content: space-between;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-purple);
+            text-shadow: 0 0 10px rgba(207, 159, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .service-card:hover .stat-number {
+            transform: scale(1.1);
+            text-shadow: 0 0 20px rgba(207, 159, 255, 0.8);
+        }
+
+        /* 3. Interactive Rating System */
+        .rating-system {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .star {
+            color: var(--primary-purple);
+            font-size: 1.2rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            filter: drop-shadow(0 0 5px rgba(207, 159, 255, 0.3));
+        }
+
+        .star:hover {
+            transform: scale(1.3);
+            filter: drop-shadow(0 0 10px rgba(207, 159, 255, 0.8));
+        }
+
+        .rating-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+
+        .service-card:hover .rating-system {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary-purple);
+        }
+
+        /* 4. Availability Indicator */
+        .availability-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 255, 100, 0.1);
+            border: 1px solid rgba(0, 255, 100, 0.3);
+            border-radius: 20px;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .availability-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ff64;
+            box-shadow: 0 0 10px rgba(0, 255, 100, 0.5);
+            animation: blink 2s infinite;
+        }
+
+        .availability-text {
+            color: #00ff64;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+        /* 5. Quick Action Buttons */
+        .quick-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover .quick-actions {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .quick-btn {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quick-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .quick-btn:hover::before {
+            left: 100%;
+        }
+
+        .quick-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(207, 159, 255, 0.4);
+        }
+
+        /* 6. Floating Particles Animation */
+        .floating-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--primary-purple);
+            border-radius: 50%;
+            opacity: 0;
+            animation: float 6s infinite;
+        }
+
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 30%; animation-delay: 1s; }
+        .particle:nth-child(3) { left: 50%; animation-delay: 2s; }
+        .particle:nth-child(4) { left: 70%; animation-delay: 3s; }
+        .particle:nth-child(5) { left: 90%; animation-delay: 4s; }
+
+        @keyframes float {
+            0% { transform: translateY(100px); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px); opacity: 0; }
+        }
+
+        .service-card:hover .particle {
+            animation-duration: 3s;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            backdrop-filter: blur(30px);
+            border-radius: 24px;
+            padding: 3rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            position: relative;
+            transform: scale(0.8) translateY(50px);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg);
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            filter: drop-shadow(0 0 20px rgba(207, 159, 255, 0.3));
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-description {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .modal-features li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .modal-features li:last-child {
+            border-bottom: none;
+        }
+
+        .modal-features li::before {
+            content: '✓';
+            color: var(--primary-purple);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .service-card {
+                min-height: 380px;
+            }
+            
+            .modal-content {
+                padding: 2rem;
+                margin: 1rem;
+            }
+            
+            .modal-title {
+                font-size: 1.5rem;
+            }
+            
+            .modal-icon {
+                font-size: 3rem;
+            }
+        }
+
+
+
+
+        /* Doctor Section Styles */
+        .doctors-section {
+            margin: 4rem 0;
+        }
+
+        .doctors-section h2 {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 3rem;
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doctors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .doctor-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2.5rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .doctor-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .doctor-card:hover::before {
+            left: 100%;
+        }
+
+        .doctor-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: var(--glow);
+            border-color: var(--primary-purple);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .doctor-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .doctor-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .doctor-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .doctor-title {
+            font-size: 1rem;
+            color: var(--primary-purple);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .doctor-specialties {
+            margin-bottom: 1.5rem;
+        }
+
+        .doctor-specialties h4 {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .specialties-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .specialty-tag {
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .specialty-tag:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(207, 159, 255, 0.4);
+        }
+
+        .doctor-info {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .doctor-contact {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .contact-btn {
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .contact-btn:hover {
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(207, 159, 255, 0.4);
+        }
+
+        .common-procedure {
+            background: rgba(255, 157, 157, 0.1);
+            border: 1px solid rgba(255, 157, 157, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .common-procedure h3 {
+            color: var(--primary-pink);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .common-procedure p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            backdrop-filter: blur(30px);
+            border-radius: 24px;
+            padding: 3rem;
+            max-width: 900px;
+            width: 90vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            position: relative;
+            transform: scale(0.8) translateY(50px);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg);
+        }
+
+         /* Booking Form Styles */
+        .booking-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--glass-bg);
+            color: #CF9FFF;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+
+
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 3px rgba(207, 159, 255, 0.2);
+            
+        }
+
+
+
+
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(207, 159, 255, 0.4);
+        }
+
+        /* Success Message */
+        .success-message {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            color: var(--primary-purple);
+            margin-bottom: 1rem;
+        }
+
+        .success-message h3 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .success-message p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+/* Contact Info Modal */
+.contact-info {
+    text-align: center;
+    padding: 2rem;
+}
+
+/* Center the title */
+.contact-info h3 {
+    color: var(--text-primary);
+    margin-bottom: 2rem;
+}
+
+/* Center the contact box vertically */
+.contact-method {
+    display: flex;
+    flex-direction: column; /* Stack icon and details vertically */
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    background: var(--glass-bg);
+    border-radius: 15px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-align: center;
+}
+
+/* Hover effect */
+.contact-method:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+}
+
+/* Icon styling */
+.contact-method i {
+    font-size: 1.8rem;
+    color: var(--primary-purple);
+}
+
+/* Center the text under the icon */
+.contact-details {
+    text-align: center;
+}
+
+/* Title text */
+.contact-details h4 {
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+/* Description text */
+.contact-details p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .doctors-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .doctor-card {
+                padding: 2rem;
+            }
+            
+            .doctor-contact {
+                flex-direction: column;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 2rem;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /* About Section */
+        .about-section {
+            display: block;
+            margin: clamp(4rem, 8vh, 8rem) 0;
+            opacity: 1;
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr));
+            gap: clamp(2rem, 4vw, 4rem);
+            margin-bottom: clamp(3rem, 6vh, 5rem);
+        }
+
+        .about-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: clamp(2rem, 4vw, 3rem);
+            border: 1px solid var(--border-color);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .about-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .about-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--glow);
+            border-color: var(--primary-purple);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .about-card h3 {
+            color: var(--text-primary);
+            font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+            margin-bottom: clamp(1rem, 2vh, 1.5rem);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .about-card h3 i {
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .about-card p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-size: clamp(0.95rem, 1.3vw, 1.15rem);
+        }
+
+        /* Administrator Cards */
+        .admin-section {
+            margin: clamp(4rem, 8vh, 6rem) 0;
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+            gap: clamp(2rem, 4vw, 3rem);
+            margin-bottom: clamp(3rem, 6vh, 4rem);
+        }
+
+        .admin-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: clamp(2rem, 4vw, 2.5rem);
+            border: 1px solid var(--border-color);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .admin-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .admin-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .admin-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--glow);
+            border-color: var(--primary-purple);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .admin-image {
+            width: clamp(120px, 15vw, 160px);
+            height: clamp(120px, 15vw, 160px);
+            border-radius: 50%;
+            margin: 0 auto clamp(1.5rem, 3vh, 2rem);
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            padding: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-image img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #2a2a3e;
+        }
+
+        .admin-placeholder {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2a2a3e 0%, #1a1a2e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(2rem, 4vw, 3rem);
+            color: var(--primary-purple);
+        }
+
+        .admin-name {
+            color: var(--text-primary);
+            font-size: clamp(1.2rem, 2vw, 1.5rem);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-role {
+            color: var(--text-secondary);
+            font-size: clamp(0.9rem, 1.2vw, 1rem);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        /* Map Section */
+        .map-section {
+            margin: clamp(4rem, 8vh, 6rem) 0;
+        }
+
+        .map-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: clamp(1.5rem, 3vw, 2rem);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .map-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .map-container:hover::before {
+            transform: scaleX(1);
+        }
+
+        .map-container:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--map-glow);
+            border-color: var(--primary-pink);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .map-title {
+            color: var(--text-primary);
+            font-size: clamp(1.5rem, 2.5vw, 2rem);
+            font-weight: 600;
+            margin-bottom: clamp(1.5rem, 3vh, 2rem);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .map-title i {
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .map-frame {
+            width: 100%;
+            height: clamp(300px, 40vh, 450px);
+            border-radius: 16px;
+            border: 2px solid var(--border-color);
+            transition: all 0.4s ease;
+            filter: brightness(0.9) contrast(1.1);
+        }
+
+        .map-frame:hover {
+            border-color: var(--primary-pink);
+            filter: brightness(1) contrast(1.2);
+            transform: scale(1.02);
+        }
+
+        /* Floating Elements */
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .shape:nth-child(1) {
+            width: clamp(60px, 8vw, 120px);
+            height: clamp(60px, 8vw, 120px);
+            top: 15%;
+            left: 8%;
+            background: radial-gradient(circle, rgba(255, 157, 157, 0.1) 0%, transparent 70%);
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: clamp(80px, 10vw, 160px);
+            height: clamp(80px, 10vw, 160px);
+            top: 60%;
+            right: 10%;
+            background: radial-gradient(circle, rgba(207, 159, 255, 0.1) 0%, transparent 70%);
+            animation-delay: 3s;
+        }
+
+        .shape:nth-child(3) {
+            width: clamp(40px, 6vw, 80px);
+            height: clamp(40px, 6vw, 80px);
+            bottom: 25%;
+            left: 15%;
+            background: radial-gradient(circle, rgba(255, 157, 157, 0.08) 0%, transparent 70%);
+            animation-delay: 6s;
+        }
+
+        .shape:nth-child(4) {
+            width: clamp(50px, 7vw, 100px);
+            height: clamp(50px, 7vw, 100px);
+            top: 40%;
+            right: 30%;
+            background: radial-gradient(circle, rgba(207, 159, 255, 0.08) 0%, transparent 70%);
+            animation-delay: 2s;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-10px) rotate(1deg);
+            }
+            50% {
+                transform: translateY(-5px) rotate(-1deg);
+            }
+            75% {
+                transform: translateY(-15px) rotate(0.5deg);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .map-frame {
+                height: clamp(250px, 35vh, 350px);
+            }
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: clamp(2rem, 4vh, 4rem);
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator i {
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            color: var(--text-tertiary);
+            transition: all 0.3s ease;
+        }
+
+        .scroll-indicator:hover i {
+            color: var(--primary-purple);
+            transform: scale(1.2);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-15px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-8px);
+            }
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu:hover {
+            background: var(--glass-bg);
+            color: var(--primary-purple);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .contraceptive-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .hero-title {
+                font-size: clamp(2.5rem, 12vw, 4rem);
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contraceptive-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .service-card,
+            .about-card {
+                padding: 1.5rem;
+            }
+
+            .contraceptive-item {
+                padding: 1rem;
+            }
+        }
+
+        /* High DPI displays */
+        @media (min-resolution: 2dppx) {
+            body {
+                font-size: clamp(16px, 1.8vw, 20px);
+            }
+        }
+
+        /* Large screens */
+        @media (min-width: 1920px) {
+            .container {
+                max-width: 1600px;
+            }
+            
+            body {
+                font-size: 20px;
+            }
+        }
+
+/* Footer */
+footer {
+    background: var(--card-bg);
+    backdrop-filter: blur(30px);
+    border-top: 1px solid var(--border-color);
+    margin-top: clamp(8rem, 12vh, 12rem);
+    position: relative;
+    overflow: hidden;
+}
+
+footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-pink), var(--primary-purple), var(--primary-pink));
+    animation: gradientMove 3s ease-in-out infinite alternate;
+}
+
+@keyframes gradientMove {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.footer-content {
+    padding: clamp(3rem, 6vh, 6rem) 0 clamp(2rem, 4vh, 3rem);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+    gap: clamp(2rem, 4vw, 4rem);
+    position: relative;
+}
+
+.footer-section h3 {
+    color: var(--text-primary);
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
+    font-weight: 600;
+    margin-bottom: clamp(1rem, 2vh, 1.5rem);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.footer-section h3 i {
+    background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: clamp(1.3rem, 2.2vw, 1.6rem);
+}
+
+.footer-section p {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+    margin-bottom: 1.5rem;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 0.8rem;
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    border-radius: 8px;
+    position: relative;
+}
+
+.footer-links a::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 2px;
+    background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+    transition: width 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--text-primary);
+    transform: translateX(10px);
+    padding-left: 1rem;
+}
+
+.footer-links a:hover::before {
+    width: 20px;
+}
+
+.footer-links a i {
+    font-size: 1rem;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.footer-links a:hover i {
+    opacity: 1;
+    color: var(--primary-purple);
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: var(--glass-bg);
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid var(--border-color);
+    font-size: 1.2rem;
+}
+
+.social-links a:hover {
+    background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+    color: white;
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 10px 25px rgba(207, 159, 255, 0.3);
+    border-color: transparent;
+}
+
+.footer-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-secondary);
+    font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+    border-radius: 10px;
+}
+
+.contact-item:hover {
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    transform: translateX(5px);
+}
+
+.contact-item i {
+    color: var(--primary-purple);
+    font-size: 1.2rem;
+    min-width: 20px;
+}
+
+.footer-bottom {
+    border-top: 1px solid var(--border-color);
+    padding: clamp(1.5rem, 3vh, 2rem) 0;
+    text-align: center;
+    color: var(--text-tertiary);
+    font-size: clamp(0.9rem, 1.2vw, 1rem);
+    position: relative;
+}
+
+.footer-bottom::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary-purple), transparent);
+}
+
+.footer-bottom p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.footer-bottom .heart {
+    color: var(--primary-pink);
+    animation: heartbeat 2s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+.footer-logo {
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    font-weight: 700;
+    background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.footer-logo:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 20px rgba(207, 159, 255, 0.5));
+}
+
+/* Newsletter Signup */
+.newsletter-form {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.newsletter-input {
+    flex: 1;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 25px;
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.newsletter-input:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 20px rgba(207, 159, 255, 0.3);
+}
+
+.newsletter-input::placeholder {
+    color: var(--text-tertiary);
+}
+
+.newsletter-btn {
+    padding: 0.8rem 1.5rem;
+    background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.newsletter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(207, 159, 255, 0.4);
+}
+
+/* Responsive Footer */
+@media (max-width: 768px) {
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+        text-align: center;
+    }
+    
+    .newsletter-form {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .social-links {
+        justify-content: center;
+    }
+    
+    .footer-bottom p {
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-content {
+        padding: 2rem 0 1.5rem;
+    }
+    
+    .social-links a {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+}
+
+
+
+    </style>
+</head>
+<body>
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <header id="header">
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">
+    <img src="images/log.png" alt="Logo" class="logo-img">
+    Blush Bloom & Co.
+</a>
+
+                <ul class="nav-links">
+<li><a href="#" onclick="showHome()">Home</a></li>
+<li><a href="#" onclick="showServices()">Services</a></li>
+<li><a href="#" onclick="showDoctors()">Our Doctors</a></li>
+<li><a href="#" onclick="showAbout()">About Us</a></li>
+
+                </ul>
+                <a href="index.html" class="logout-link" onclick="handleLogout(event)">Logout</a>
+
+                <div class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section class="hero">
+                <h1 class="hero-title">
+                    <span class="main-text">Blush Bloom</span>
+                    <span class="sub-text">& Co.</span>
+                </h1>
+                <p class="hero-subtitle">Empowering Women's Health & Wellness Through Innovation</p>
+
+                <div class="contraceptive-grid" id="contraceptiveGrid">
+          <div class="contraceptive-item"><i class="fas fa-venus contraceptive-icon"></i><h3 class="contraceptive-title">Female Condom</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-circle contraceptive-icon"></i><h3 class="contraceptive-title">Contraceptive Sponge</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-mars contraceptive-icon"></i><h3 class="contraceptive-title">Male Condom</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-flask contraceptive-icon"></i><h3 class="contraceptive-title">Spermicide</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-shield-alt contraceptive-icon"></i><h3 class="contraceptive-title">Cervical Cap</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-band-aid contraceptive-icon"></i><h3 class="contraceptive-title">Contraceptive Patch</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-circle-notch contraceptive-icon"></i><h3 class="contraceptive-title">Diaphragm</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-microchip contraceptive-icon"></i><h3 class="contraceptive-title">Birth Control Implant</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-syringe contraceptive-icon"></i><h3 class="contraceptive-title">Birth Control Shot</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-ring contraceptive-icon"></i><h3 class="contraceptive-title">Vaginal Ring</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-pills contraceptive-icon"></i><h3 class="contraceptive-title">Contraceptive Pill</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-exclamation-triangle contraceptive-icon"></i><h3 class="contraceptive-title">Emergency Contraception</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-dna contraceptive-icon"></i><h3 class="contraceptive-title">Progestin IUD</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-capsules contraceptive-icon"></i><h3 class="contraceptive-title">Estradiol Valerate</h3></div>
+        </div>
+                
+    <div class="services-grid" id="servicesGrid">
+        <div class="service-card" onclick="openModal('contraceptive')">
+            <!-- Progress Ring -->
+            <svg class="progress-ring" width="60" height="60">
+                <circle cx="30" cy="30" r="25" stroke-width="3" stroke="rgba(255,255,255,0.2)" fill="none"/>
+                <circle class="progress" cx="30" cy="30" r="25" stroke-width="3" stroke="#CF9FFF" fill="none"/>
+            </svg>
+            
+            <!-- Floating Particles -->
+            <div class="floating-particles">
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+            </div>
+            
+            <i class="fas fa-shield-alt service-icon"></i>
+            <h3 class="service-title">Contraceptive Solutions</h3>
+            <p class="service-description">Advanced contraceptive technologies and personalized solutions designed for modern women...</p>
+            
+            <!-- Live Stats -->
+            <div class="live-stats">
+                <div class="stat-item">
+                    <div class="stat-number" data-target="95">0</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="1200">0</div>
+                    <div class="stat-label">Patients</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="24">0</div>
+                    <div class="stat-label">Hours Support</div>
+                </div>
+            </div>
+            
+            <!-- Rating System -->
+            <div class="rating-system">
+                <div class="rating-stars">
+                    <i class="fas fa-star star"></i>
+                    <i class="fas fa-star star"></i>
+                    <i class="fas fa-star star"></i>
+                    <i class="fas fa-star star"></i>
+                    <i class="fas fa-star star"></i>
+                </div>
+                <span class="rating-text">4.9/5 (312 reviews)</span>
+            </div>
+            
+            <!-- Availability Indicator -->
+            <div class="availability-indicator">
+                <div class="availability-dot"></div>
+                <span class="availability-text">Available Now</span>
+            </div>
+            
+<div class="quick-actions">
+    <button class="quick-btn" onclick="event.stopPropagation(); bookConsultation()">
+        <i class="fas fa-calendar"></i> Book Now
+    </button>
+    <button class="quick-btn" onclick="event.stopPropagation(); openChatbox('contraceptive')">
+        <i class="fas fa-comment"></i> Chat
+    </button>
+</div>
+</div>
+        
+        <div class="service-card" onclick="openModal('wellness')">
+            <svg class="progress-ring" width="60" height="60">
+                <circle cx="30" cy="30" r="25" stroke-width="3" stroke="rgba(255,255,255,0.2)" fill="none"/>
+                <circle class="progress" cx="30" cy="30" r="25" stroke-width="3" stroke="#CF9FFF" fill="none"/>
+            </svg>
+            
+            <div class="floating-particles">
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+            </div>
+            
+            <i class="fas fa-brain service-icon"></i>
+            <h3 class="service-title">Wellness Counseling</h3>
+            <p class="service-description">Professional mental health support combining traditional therapy with innovative approaches...</p>
+            
+            <div class="live-stats">
+                <div class="stat-item">
+                    <div class="stat-number" data-target="98">0</div>
+                    <div class="stat-label">Satisfaction</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="850">0</div>
+                    <div class="stat-label">Sessions</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="15">0</div>
+                    <div class="stat-label">Therapists</div>
+                </div>
+            </div>
+            
+            <div class="rating-system">
+                <div class="rating-stars">
+                    <i class="fas fa-star star"></i>
+                    <i class="fas fa-star star"></i>
+                    <i class="fas fa-star star"></i>
+                    <i class="fas fa-star star"></i>
+                    <i class="fas fa-star star"></i>
+                </div>
+                <span class="rating-text">4.8/5 (189 reviews)</span>
+            </div>
+            
+            <div class="availability-indicator">
+                <div class="availability-dot"></div>
+                <span class="availability-text">Online Sessions Available</span>
+            </div>
+            
+<div class="quick-actions">
+    <button class="quick-btn" onclick="event.stopPropagation(); bookConsultation()">
+        <i class="fas fa-video"></i> Video Call
+    </button>
+    <button class="quick-btn" onclick="event.stopPropagation(); openChatbox('wellness')">
+        <i class="fas fa-message"></i> Message
+    </button>
+</div>
+</div>
+        
+        <div class="service-card" onclick="openModal('screening')">
+            <svg class="progress-ring" width="60" height="60">
+                <circle cx="30" cy="30" r="25" stroke-width="3" stroke="rgba(255,255,255,0.2)" fill="none"/>
+                <circle class="progress" cx="30" cy="30" r="25" stroke-width="3" stroke="#CF9FFF" fill="none"/>
+            </svg>
+            
+            <div class="floating-particles">
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+            </div>
+            
+            <i class="fas fa-heartbeat service-icon"></i>
+            <h3 class="service-title">Health Check-Up</h3>
+            <p class="service-description">State-of-the-art diagnostic technology for complete health assessment...</p>
+            
+            <div class="live-stats">
+                <div class="stat-item">
+                    <div class="stat-number" data-target="99">0</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="2400">0</div>
+                    <div class="stat-label">Tests Done</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="8">0</div>
+                    <div class="stat-label">Specialists</div>
+                </div>
+            </div>
+            
+            <div class="rating-system">
+                <div class="rating-stars">
+                    <i class="fas fa-star star"></i>
+                    <i class="fas fa-star star"></i>
+                    <i class="fas fa-star star"></i>
+                    <i class="fas fa-star star"></i>
+                    <i class="fas fa-star star"></i>
+                </div>
+                <span class="rating-text">4.9/5 (456 reviews)</span>
+            </div>
+            
+            <div class="availability-indicator">
+                <div class="availability-dot"></div>
+                <span class="availability-text">Same Day Results</span>
+            </div>
+            
+<div class="quick-actions">
+    <button class="quick-btn" onclick="event.stopPropagation(); bookConsultation()">
+        <i class="fas fa-clipboard-check"></i> Schedule
+    </button>
+    <button class="quick-btn" onclick="event.stopPropagation(); openChatbox('screening')">
+        <i class="fas fa-info"></i> Info
+    </button>
+</div>
+</div>
+        
+        <div class="service-card" onclick="openModal('prebiotics')">
+            <svg class="progress-ring" width="60" height="60">
+                <circle cx="30" cy="30" r="25" stroke-width="3" stroke="rgba(255,255,255,0.2)" fill="none"/>
+                <circle class="progress" cx="30" cy="30" r="25" stroke-width="3" stroke="#CF9FFF" fill="none"/>
+            </svg>
+            
+            <div class="floating-particles">
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+            </div>
+            
+            <i class="fas fa-dna service-icon"></i>
+            <h3 class="service-title">Advanced Prebiotics</h3>
+            <p class="service-description">Scientifically-formulated prebiotic supplements using breakthrough research...</p>
+            
+            <div class="live-stats">
+                <div class="stat-item">
+                    <div class="stat-number" data-target="92">0</div>
+                    <div class="stat-label">Improvement</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="650">0</div>
+                    <div class="stat-label">Happy Clients</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="30">0</div>
+                    <div class="stat-label">Day Program</div>
+                </div>
+            </div>
+            
+            <div class="rating-system">
+                <div class="rating-stars">
+                    <i class="fas fa-star star"></i>
+                    <i class="fas fa-star star"></i>
+                    <i class="fas fa-star star"></i>
+                    <i class="fas fa-star star"></i>
+                    <i class="fas fa-star star"></i>
+                </div>
+                <span class="rating-text">4.7/5 (203 reviews)</span>
+            </div>
+            
+            <div class="availability-indicator">
+                <div class="availability-dot"></div>
+                <span class="availability-text">Free Consultation</span>
+            </div>
+            
+<div class="quick-actions">
+    <button class="quick-btn" onclick="event.stopPropagation(); bookConsultation()">
+        <i class="fas fa-shopping-cart"></i> Order
+    </button>
+    <button class="quick-btn" onclick="event.stopPropagation(); openChatbox('prebiotics')">
+        <i class="fas fa-question"></i> Ask
+    </button>
+</div>
+    </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal('modalOverlay')">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <div class="modal-icon" id="modalIcon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            
+            <h2 class="modal-title" id="modalTitle">Service Title</h2>
+            
+            <p class="modal-description" id="modalDescription">
+                Service description will appear here...
+            </p>
+            
+            <ul class="modal-features" id="modalFeatures">
+                <!-- Features will be populated by JavaScript -->
+            </ul>
+        </div>
+    </div>
+
+
+
+
+    <!-- Doctor Section HTML -->
+    <div class="container">
+        <section class="doctors-section active" id="doctorsSection">
+            <h2>Meet Our Expert Doctors</h2>
+            
+            <div class="doctors-grid">
+                <!-- Dr. Kavita Shah Arora -->
+                <div class="doctor-card" onclick="openDoctorModal('kavita')">
+                    <div class="doctor-image">
+                        <img src="images/Kavita.jpg" alt="Dr. Kavita Shah Arora">
+                    </div>
+                    <div class="doctor-name">Dr. Kavita Shah Arora</div>
+                    <div class="doctor-title">MD, Women's Health Specialist</div>
+                    
+                    <div class="doctor-specialties">
+                        <h4>Specialties:</h4>
+                        <div class="specialties-list">
+                            <span class="specialty-tag">Female Condom</span>
+                            <span class="specialty-tag">Cervical Cap</span>
+                            <span class="specialty-tag">Contraceptive Patch</span>
+                            <span class="specialty-tag">Birth Control Implant</span>
+                            <span class="specialty-tag">Diaphragm</span>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-info">
+                        Specialized in women's reproductive health with over 15 years of experience in contraceptive counseling and procedures.
+                    </div>
+                    
+                    <div class="doctor-contact">
+                        <button class="contact-btn" onclick="event.stopPropagation(); openBookingModal('kavita')">
+                            <i class="fas fa-calendar-plus"></i> Book Appointment
+                        </button>
+                        <button class="contact-btn" onclick="event.stopPropagation(); openContactModal('kavita')">
+                            <i class="fas fa-phone"></i> Contact
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dr. Ana María López -->
+                <div class="doctor-card" onclick="openDoctorModal('ana')">
+                    <div class="doctor-image">
+                        <img src="images/ana.jpg" alt="Dr. Kavita Shah Arora">
+                    </div>
+                    <div class="doctor-name">Dr. Ana María López</div>
+                    <div class="doctor-title">MD, Reproductive Medicine</div>
+                    
+                    <div class="doctor-specialties">
+                        <h4>Specialties:</h4>
+                        <div class="specialties-list">
+                            <span class="specialty-tag">Diaphragm</span>
+                            <span class="specialty-tag">Birth Control Implant</span>
+                            <span class="specialty-tag">Birth Control Shot</span>
+                            <span class="specialty-tag">Vaginal Ring</span>
+                            <span class="specialty-tag">Contraceptive Sponge</span>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-info">
+                        Expert in reproductive medicine with specialized training in long-acting reversible contraceptives and hormone therapy.
+                    </div>
+                    
+                    <div class="doctor-contact">
+                        <button class="contact-btn" onclick="event.stopPropagation(); openBookingModal('ana')">
+                            <i class="fas fa-calendar-plus"></i> Book Appointment
+                        </button>
+                        <button class="contact-btn" onclick="event.stopPropagation(); openContactModal('ana')">
+                            <i class="fas fa-phone"></i> Contact
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dr. Narjust Duma -->
+                <div class="doctor-card" onclick="openDoctorModal('narjust')">
+                    <div class="doctor-image">
+                        <img src="images/nar.jpg" alt="Dr. Kavita Shah Arora">
+                    </div>
+                    <div class="doctor-name">Dr. Narjust Duma</div>
+                    <div class="doctor-title">MD, Family Planning Specialist</div>
+                    
+                    <div class="doctor-specialties">
+                        <h4>Specialties:</h4>
+                        <div class="specialties-list">
+                            <span class="specialty-tag">Male Condom</span>
+                            <span class="specialty-tag">Contraceptive Sponge</span>
+                            <span class="specialty-tag">Spermicide</span>
+                            <span class="specialty-tag">Birth Control Implant</span>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-info">
+                        Dedicated to comprehensive family planning services with expertise in barrier methods and contraceptive counseling.
+                    </div>
+                    
+                    <div class="doctor-contact">
+                        <button class="contact-btn" onclick="event.stopPropagation(); openBookingModal('narjust')">
+                            <i class="fas fa-calendar-plus"></i> Book Appointment
+                        </button>
+                        <button class="contact-btn" onclick="event.stopPropagation(); openContactModal('narjust')">
+                            <i class="fas fa-phone"></i> Contact
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Common Procedure Section -->
+            <div class="common-procedure">
+                <h3><i class="fas fa-microchip"></i> Birth Control Implant Procedure</h3>
+                <p>All our doctors specialize in birth control implant procedures. This long-acting reversible contraceptive provides up to 3 years of protection with a simple, minimally invasive procedure. Our expert team ensures comfortable, safe insertion with comprehensive follow-up care.</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Doctor Details Modal -->
+    <div class="modal" id="doctorModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('doctorModal')">×</button>
+            <div id="doctorModalContent"></div>
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div class="modal" id="bookingModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('bookingModal')">×</button>
+            <div id="bookingModalContent"></div>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div class="modal" id="contactModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('contactModal')">×</button>
+            <div id="contactModalContent"></div>
+        </div>
+    </div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="about-section" id="aboutSection">
+        <!-- Administrator Cards -->
+        <div class="admin-section">
+            <div class="admin-grid">
+                <div class="admin-card">
+                    <div class="admin-image">
+                        <div class="admin-placeholder">
+                            <img src="images/2.jpg" alt="Administrator 1">
+                        </div>
+                        <!-- Replace with actual image: <img src="admin1.jpg" alt="Administrator 1"> -->
+                    </div>
+                    <div class="admin-name">Ms. Nicah Kyla Padilla Tutor </div>
+                    <div class="admin-role">Administrator</div>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-image">
+                        <div class="admin-placeholder">
+                            <img src="images/1.jpg" alt="Administrator 2">
+                        </div>
+                        <!-- Replace with actual image: <img src="admin2.jpg" alt="Administrator 2"> -->
+                    </div>
+                    <div class="admin-name">Ms. Chikina Mae Vallente</div>
+                    <div class="admin-role">Administrator</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map Section -->
+        <div class="map-section">
+            <div class="map-container">
+                <div class="map-title">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Our Location
+                </div>
+                <iframe 
+                    class="map-frame"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d981.8912868419459!2d124.83795556961887!3d10.134635419553316!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x330747bda1841cf3%3A0xfa5447ee8d12dbd2!2sThe%20College%20of%20Maasin!5e0!3m2!1sen!2sph!4v1751783742893!5m2!1sen!2sph" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+
+        <!-- Mission and Vision Cards -->
+        <div class="about-grid">
+            <div class="about-card">
+                <h3><i class="fas fa-rocket"></i> Our Mission</h3>
+                <p>To revolutionize women's healthcare through innovative technology and personalized care. We combine cutting-edge medical advances with compassionate support to empower women to take control of their health journey. Every solution we offer is designed with the modern woman in mind, addressing real needs with real results.</p>
+            </div>
+            
+            <div class="about-card">
+                <h3><i class="fas fa-star"></i> Our Vision</h3>
+                <p>To create a future where women's health is not just treated, but optimized. We envision a world where every woman has access to personalized, technology-driven healthcare solutions that adapt to her unique needs and lifestyle. Through innovation, education, and empowerment, we're building tomorrow's healthcare today.</p>
+            </div>
+        </div>
+    </div>
+
+                <div class="scroll-indicator">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </section>
+        </div>
+
+
+        <footer>
+  <div class="container footer-content">
+    <div class="footer-section">
+      <h3><i class="fas fa-heartbeat"></i> About Us</h3>
+      <p>We’re dedicated to bringing you engaging and informative content about contraceptive options and reproductive health awareness.</p>
+    </div>
+
+    <div class="footer-section">
+      <h3><i class="fas fa-link"></i> Quick Links</h3>
+<ul class="footer-links">
+  <li><a href="#" onclick="showHome()"><i class="fas fa-chevron-right"></i> Home</a></li>
+  <li><a href="#" onclick="showAbout()"><i class="fas fa-chevron-right"></i> About</a></li>
+  <li><a href="#" onclick="showServices()"><i class="fas fa-chevron-right"></i> Services</a></li>
+  <li><a href="#contact"><i class="fas fa-chevron-right"></i> Contact</a></li>
+</ul>
+
+    </div>
+
+    <div class="footer-section">
+      <h3><i class="fas fa-paper-plane"></i> Newsletter</h3>
+      <p>Get updates and tips directly to your inbox. Sign up below.</p>
+      <form class="newsletter-form">
+        <input type="email" class="newsletter-input" placeholder="Enter your email" required />
+        <button type="submit" class="newsletter-btn">Subscribe</button>
+      </form>
+    </div>
+
+    <div class="footer-section footer-contact">
+      <h3><i class="fas fa-phone-alt"></i> Contact</h3>
+      <div class="contact-item"><i class="fas fa-map-marker-alt"></i> Maasin City, PH</div>
+      <div class="contact-item"><i class="fas fa-envelope"></i> NicahKylaPadillaTutor@gmail.com</div>
+      <div class="contact-item"><i class="fas fa-envelope"></i> ChikinaMaeVallente@gmail.com</div>
+      <div class="contact-item"><i class="fas fa-phone"></i> +63 992 499 6454</div>
+      <div class="social-links">
+        <a href="https://web.facebook.com/NINXXXI" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://web.facebook.com/lovelykhenna.gray" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href=""><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>
+      <span class="footer-logo">Blush Bloom & Co.</span>
+    </p>
+  </div>
+</footer>
+
+    <!-- Logout Success Message -->
+    <div id="logoutMessage" class="logout-message">
+        <div class="logout-message-content">
+            <div class="logout-icon">👋</div>
+            <h3>Logout Successful!</h3>
+            <p>You have been successfully logged out. Redirecting you to the home page...</p>
+            <div class="loading-bar">
+                <div id="loadingProgress" class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    </main>
+
+<script>
+// ==========================================
+// DATA OBJECTS
+// ==========================================
+
+// Doctor data
+const doctorData = {
+    kavita: {
+        name: "Dr. Kavita Shah Arora",
+        title: "MD, Women's Health Specialist",
+        image: "images/Kavita.jpg",
+        specialties: ["Female Condom", "Cervical Cap", "Contraceptive Patch", "Birth Control Implant", "Diaphragm"],
+        bio: "Dr. Kavita Shah Arora is a board-certified gynecologist with over 15 years of experience in women's reproductive health. She specializes in contraceptive counseling, family planning, and minimally invasive procedures. Dr. Arora is passionate about empowering women with comprehensive reproductive health education and personalized care.",
+        education: [
+            "MD - All India Institute of Medical Sciences (AIIMS), New Delhi",
+            "Residency in Obstetrics & Gynecology - Johns Hopkins Hospital",
+            "Fellowship in Reproductive Endocrinology - Mayo Clinic"
+        ],
+        experience: "15+ years in women's reproductive health",
+        languages: ["English", "Hindi", "Gujarati"],
+        phone: "+1 (555) 123-4567",
+        email: "dr.kavita@healthcenter.com",
+        availability: "Mon-Fri: 9AM-5PM, Sat: 9AM-2PM"
+    },
+    ana: {
+        name: "Dr. Ana María López",
+        title: "MD, Reproductive Medicine",
+        image: "images/ana.jpg",
+        specialties: ["Diaphragm", "Birth Control Implant", "Birth Control Shot", "Vaginal Ring", "Contraceptive Sponge"],
+        bio: "Dr. Ana María López is a renowned reproductive medicine specialist with extensive expertise in long-acting reversible contraceptives and hormone therapy. She has published numerous research papers on contraceptive efficacy and patient satisfaction, making her a leading voice in reproductive health.",
+        education: [
+            "MD - Universidad Nacional de Colombia",
+            "Residency in Obstetrics & Gynecology - Stanford University Medical Center",
+            "Fellowship in Reproductive Endocrinology - Harvard Medical School"
+        ],
+        experience: "12+ years in reproductive medicine",
+        languages: ["English", "Spanish", "Portuguese"],
+        phone: "+1 (555) 234-5678",
+        email: "dr.ana@healthcenter.com",
+        availability: "Mon-Wed: 8AM-4PM, Thu-Fri: 10AM-6PM"
+    },
+    narjust: {
+        name: "Dr. Narjust Duma",
+        title: "MD, Family Planning Specialist",
+        image: "images/nar.jpg",
+        specialties: ["Male Condom", "Contraceptive Sponge", "Spermicide", "Birth Control Implant"],
+        bio: "Dr. Narjust Duma is a dedicated family planning specialist committed to providing comprehensive reproductive health services. With a focus on barrier methods and contraceptive counseling, Dr. Duma ensures that each patient receives personalized care tailored to their individual needs and lifestyle.",
+        education: [
+            "MD - University of Rochester School of Medicine",
+            "Residency in Family Medicine - University of California, San Francisco",
+            "Fellowship in Family Planning - University of Michigan"
+        ],
+        experience: "10+ years in family planning",
+        languages: ["English", "French", "Arabic"],
+        phone: "+1 (555) 345-6789",
+        email: "dr.narjust@healthcenter.com",
+        availability: "Tue-Sat: 9AM-5PM"
+    }
+};
+
+// Service data
+const serviceData = {
+    contraceptive: {
+        icon: 'fas fa-shield-alt',
+        title: 'Contraceptive Solutions',
+        description: 'Advanced contraceptive technologies and personalized solutions designed for modern women. From smart pills to next-generation IUDs, we provide cutting-edge options with expert guidance and comprehensive support.',
+        features: [
+            'Smart contraceptive pills with tracking technology',
+            'Next-generation IUDs with enhanced comfort',
+            'Personalized contraceptive planning',
+            'Expert medical guidance and support',
+            'Comprehensive health monitoring',
+            'Flexible appointment scheduling'
+        ]
+    },
+    wellness: {
+        icon: 'fas fa-brain',
+        title: 'Wellness Counseling',
+        description: 'Professional mental health support combining traditional therapy with innovative approaches. Our certified counselors specialize in women\'s unique challenges, offering both in-person and virtual sessions.',
+        features: [
+            'Certified mental health professionals',
+            'Specialized women\'s therapy programs',
+            'In-person and virtual session options',
+            'Stress management techniques',
+            'Relationship and family counseling',
+            'Career and life transition support'
+        ]
+    },
+    screening: {
+        icon: 'fas fa-heartbeat',
+        title: 'Health Check-Up',
+        description: 'State-of-the-art diagnostic technology for complete health assessment. Our advanced screening programs detect potential issues early and provide personalized prevention strategies.',
+        features: [
+            'Advanced diagnostic technology',
+            'Comprehensive health assessments',
+            'Early detection programs',
+            'Personalized prevention strategies',
+            'Regular health monitoring',
+            'Same-day results available'
+        ]
+    },
+    prebiotics: {
+        icon: 'fas fa-dna',
+        title: 'Advanced Prebiotics',
+        description: 'Scientifically-formulated prebiotic supplements using breakthrough research in gut health. Our personalized approach ensures optimal digestive wellness and overall health improvement.',
+        features: [
+            'Scientifically-formulated supplements',
+            'Personalized gut health assessment',
+            'Breakthrough research-based formulas',
+            'Comprehensive digestive wellness programs',
+            'Expert nutritional guidance',
+            '30-day transformation program'
+        ]
+    }
+};
+
+// ==========================================
+// NAVIGATION FUNCTIONS
+// ==========================================
+
+function showHome() {
+    setActiveSection('home');
+    const sections = getSectionElements();
+    
+    // Show home section
+    if (sections.contraceptiveGrid) {
+        sections.contraceptiveGrid.style.display = 'grid';
+    }
+    
+    // Hide other sections
+    hideAllSectionsExcept(['contraceptiveGrid']);
+    setActiveLink('Home');
+}
+
+function showServices() {
+    setActiveSection('services');
+    const sections = getSectionElements();
+    
+    // Show services section
+    if (sections.servicesGrid) {
+        sections.servicesGrid.style.display = 'grid';
+        sections.servicesGrid.classList.add('active');
+    }
+    
+    // Hide other sections
+    hideAllSectionsExcept(['servicesGrid']);
+    setActiveLink('Services');
+}
+
+function showDoctors() {
+    setActiveSection('doctors');
+    const sections = getSectionElements();
+    
+    // Show doctors section
+    if (sections.doctorsSection) {
+        sections.doctorsSection.style.display = 'block';
+        sections.doctorsSection.classList.add('active');
+    }
+    
+    // Hide other sections
+    hideAllSectionsExcept(['doctorsSection']);
+    setActiveLink('Our Doctors');
+}
+
+function showAbout() {
+    setActiveSection('about');
+    const sections = getSectionElements();
+    
+    // Show about section
+    if (sections.aboutSection) {
+        sections.aboutSection.style.display = 'block';
+        sections.aboutSection.classList.add('active');
+    }
+    
+    // Hide other sections
+    hideAllSectionsExcept(['aboutSection']);
+    setActiveLink('About Us');
+}
+
+// Helper functions for navigation
+function setActiveSection(sectionName) {
+    try {
+        localStorage.setItem('activeSection', sectionName);
+    } catch (e) {
+        console.warn('localStorage not available:', e);
+    }
+}
+
+function getSectionElements() {
+    return {
+        servicesGrid: document.getElementById('servicesGrid'),
+        aboutSection: document.getElementById('aboutSection'),
+        contraceptiveGrid: document.getElementById('contraceptiveGrid'),
+        doctorsSection: document.getElementById('doctorsSection')
+    };
+}
+
+function hideAllSectionsExcept(keepVisible) {
+    const sections = getSectionElements();
+    
+    Object.keys(sections).forEach(sectionKey => {
+        const section = sections[sectionKey];
+        if (section && !keepVisible.includes(sectionKey)) {
+            section.style.display = 'none';
+            section.classList.remove('active');
+        }
+    });
+}
+
+function setActiveLink(text) {
+    document.querySelectorAll('.nav-link, .nav-links a').forEach(link => {
+        link.classList.toggle('active', link.textContent.trim() === text);
+    });
+}
+
+// ==========================================
+// MODAL FUNCTIONS
+// ==========================================
+
+// Universal close modal function
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// Service modal functions
+function openModal(serviceType) {
+    const modal = document.getElementById('modalOverlay');
+    const service = serviceData[serviceType];
+    
+    if (service && modal) {
+        // Update modal content
+        updateModalContent(service);
+        
+        // Show modal
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function updateModalContent(service) {
+    const modalIcon = document.getElementById('modalIcon');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDescription = document.getElementById('modalDescription');
+    const featuresList = document.getElementById('modalFeatures');
+    
+    if (modalIcon) modalIcon.innerHTML = `<i class="${service.icon}"></i>`;
+    if (modalTitle) modalTitle.textContent = service.title;
+    if (modalDescription) modalDescription.textContent = service.description;
+    
+    // Update features list
+    if (featuresList) {
+        featuresList.innerHTML = '';
+        service.features.forEach(feature => {
+            const li = document.createElement('li');
+            li.textContent = feature;
+            featuresList.appendChild(li);
+        });
+    }
+}
+
+// Doctor modal functions
+function openDoctorModal(doctorId) {
+    const doctor = doctorData[doctorId];
+    const modal = document.getElementById('doctorModal');
+    const modalContent = document.getElementById('doctorModalContent');
+    
+    if (doctor && modal && modalContent) {
+        modalContent.innerHTML = createDoctorModalContent(doctor, doctorId);
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function createDoctorModalContent(doctor, doctorId) {
+    return `
+        <div class="doctor-image" style="margin: 0 auto 2rem; width: 200px; height: 200px; border-radius: 50%; overflow: hidden;">
+            <img src="${doctor.image}" alt="${doctor.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />
+        </div>
+        <div class="doctor-name" style="text-align: center; margin-bottom: 0.5rem;">${doctor.name}</div>
+        <div class="doctor-title" style="text-align: center; margin-bottom: 2rem;">${doctor.title}</div>
+        
+        <div style="margin-bottom: 2rem;">
+            <h4 style="color: var(--text-primary); margin-bottom: 1rem;">About</h4>
+            <p style="color: var(--text-secondary); line-height: 1.7;">${doctor.bio}</p>
+        </div>
+        
+        <div style="margin-bottom: 2rem;">
+            <h4 style="color: var(--text-primary); margin-bottom: 1rem;">Specialties</h4>
+            <div class="specialties-list">
+                ${doctor.specialties.map(specialty => `<span class="specialty-tag">${specialty}</span>`).join('')}
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 2rem;">
+            <h4 style="color: var(--text-primary); margin-bottom: 1rem;">Education</h4>
+            <ul style="color: var(--text-secondary); line-height: 1.7; padding-left: 1rem;">
+                ${doctor.education.map(edu => `<li>${edu}</li>`).join('')}
+            </ul>
+        </div>
+        
+        <div style="margin-bottom: 2rem;">
+            <h4 style="color: var(--text-primary); margin-bottom: 1rem;">Experience</h4>
+            <p style="color: var(--text-secondary);">${doctor.experience}</p>
+        </div>
+        
+        <div style="margin-bottom: 2rem;">
+            <h4 style="color: var(--text-primary); margin-bottom: 1rem;">Languages</h4>
+            <p style="color: var(--text-secondary);">${doctor.languages.join(', ')}</p>
+        </div>
+        
+        <div class="doctor-contact" style="display: flex; justify-content: center; gap: 1rem; margin-top: 2rem;">
+            <button class="contact-btn" onclick="openBookingModal('${doctorId}')">
+                <i class="fas fa-calendar-plus"></i> Book Appointment
+            </button>
+            <button class="contact-btn" onclick="openContactModal('${doctorId}')">
+                <i class="fas fa-phone"></i> Contact Doctor
+            </button>
+        </div>
+    `;
+}
+
+function openBookingModal(doctorId) {
+    const doctor = doctorData[doctorId];
+    const modal = document.getElementById('bookingModal');
+    const modalContent = document.getElementById('bookingModalContent');
+    
+    if (doctor && modal && modalContent) {
+        modalContent.innerHTML = createBookingModalContent(doctor, doctorId);
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function createBookingModalContent(doctor, doctorId) {
+    const minDate = new Date().toISOString().split('T')[0];
+    
+    return `
+        <h3 style="text-align: center; color: var(--text-primary); margin-bottom: 2rem;">
+            Book Appointment with ${doctor.name}
+        </h3>
+        
+        <div class="booking-form">
+            <form id="bookingForm" onsubmit="submitBooking(event, '${doctorId}')">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="appointmentDate">Preferred Date</label>
+                        <input type="date" id="appointmentDate" name="appointmentDate" required min="${minDate}">
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentTime">Preferred Time</label>
+                        <select id="appointmentTime" name="appointmentTime" required>
+                            <option value="">Select Time</option>
+                            <option value="09:00">9:00 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="12:00">12:00 PM</option>
+                            <option value="13:00">1:00 PM</option>
+                            <option value="14:00">2:00 PM</option>
+                            <option value="15:00">3:00 PM</option>
+                            <option value="16:00">4:00 PM</option>
+                            <option value="17:00">5:00 PM</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="appointmentType">Appointment Type</label>
+                    <select id="appointmentType" name="appointmentType" required>
+                        <option value="">Select Type</option>
+                        <option value="consultation">Initial Consultation</option>
+                        <option value="followup">Follow-up Visit</option>
+                        <option value="procedure">Procedure</option>
+                        <option value="emergency">Urgent Care</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="specialtyService">Specialty Service</label>
+                    <select id="specialtyService" name="specialtyService">
+                        <option value="">Select Specialty</option>
+                        ${doctor.specialties.map(specialty => `<option value="${specialty}">${specialty}</option>`).join('')}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Additional Notes</label>
+                    <textarea id="message" name="message" placeholder="Please describe your health concerns or questions..."></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-calendar-check"></i> Book Appointment
+                </button>
+            </form>
+        </div>
+    `;
+}
+
+function openContactModal(doctorId) {
+    const doctor = doctorData[doctorId];
+    const modal = document.getElementById('contactModal');
+    const modalContent = document.getElementById('contactModalContent');
+    
+    if (doctor && modal && modalContent) {
+        modalContent.innerHTML = createContactModalContent(doctor);
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function createContactModalContent(doctor) {
+    return `
+        <div class="contact-info">
+            <h3>Contact ${doctor.name}</h3>
+            
+            <div class="contact-method" onclick="window.location.href='tel:${doctor.phone}'">
+                <i class="fas fa-phone"></i>
+                <div class="contact-details">
+                    <h4>Phone</h4>
+                    <p>${doctor.phone}</p>
+                </div>
+            </div>
+            
+            <div class="contact-method" onclick="window.location.href='mailto:${doctor.email}'">
+                <i class="fas fa-envelope"></i>
+                <div class="contact-details">
+                    <h4>Email</h4>
+                    <p>${doctor.email}</p>
+                </div>
+            </div>
+            
+            <div class="contact-method">
+                <i class="fas fa-clock"></i>
+                <div class="contact-details">
+                    <h4>Availability</h4>
+                    <p>${doctor.availability}</p>
+                </div>
+            </div>
+            
+            <div class="contact-method">
+                <i class="fas fa-map-marker-alt"></i>
+                <div class="contact-details">
+                    <h4>Location</h4>
+                    <p>Health Center Main Building<br>123 Medical Drive, Suite 456</p>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// ==========================================
+// BOOKING FUNCTIONS
+// ==========================================
+
+function submitBooking(event, doctorId) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const bookingData = createBookingData(formData, doctorId);
+    
+    // Show loading state
+    const submitBtn = event.target.querySelector('.submit-btn');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Booking...';
+    submitBtn.disabled = true;
+    
+    // Simulate booking submission
+    setTimeout(() => {
+        showBookingSuccess(bookingData);
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }, 1000);
+}
+
+function createBookingData(formData, doctorId) {
+    return {
+        doctorId: doctorId,
+        doctorName: doctorData[doctorId].name,
+        firstName: formData.get('firstName'),
+        lastName: formData.get('lastName'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        appointmentDate: formData.get('appointmentDate'),
+        appointmentTime: formData.get('appointmentTime'),
+        appointmentType: formData.get('appointmentType'),
+        specialtyService: formData.get('specialtyService'),
+        message: formData.get('message'),
+        bookingId: 'BK' + Date.now(),
+        status: 'pending'
+    };
+}
+
+function showBookingSuccess(bookingData) {
+    const modalContent = document.getElementById('bookingModalContent');
+    
+    if (modalContent) {
+        modalContent.innerHTML = createBookingSuccessContent(bookingData);
+    }
+}
+
+function createBookingSuccessContent(bookingData) {
+    return `
+        <div class="success-message">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>Appointment Booked Successfully!</h3>
+            <p>Your appointment with ${bookingData.doctorName} has been scheduled.</p>
+            
+            <div style="background: var(--glass-bg); padding: 2rem; border-radius: 15px; margin: 2rem 0; text-align: left;">
+                <h4 style="color: var(--text-primary); margin-bottom: 1rem;">Appointment Details:</h4>
+                <p><strong>Booking ID:</strong> ${bookingData.bookingId}</p>
+                <p><strong>Doctor:</strong> ${bookingData.doctorName}</p>
+                <p><strong>Date:</strong> ${new Date(bookingData.appointmentDate).toLocaleDateString()}</p>
+                <p><strong>Time:</strong> ${bookingData.appointmentTime}</p>
+                <p><strong>Type:</strong> ${bookingData.appointmentType}</p>
+                ${bookingData.specialtyService ? `<p><strong>Specialty:</strong> ${bookingData.specialtyService}</p>` : ''}
+            </div>
+            
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 2rem;">
+                A confirmation email has been sent to ${bookingData.email}. 
+                Please arrive 15 minutes early for your appointment.
+            </p>
+            
+            <button class="contact-btn" onclick="closeModal('bookingModal')">
+                <i class="fas fa-check"></i> Close
+            </button>
+        </div>
+    `;
+}
+
+// ==========================================
+// ANIMATION FUNCTIONS
+// ==========================================
+
+function animateCounter(element, target, duration = 2000) {
+    const start = 0;
+    const increment = target / (duration / 16);
+    let current = start;
+    
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            current = target;
+            clearInterval(timer);
+        }
+        element.textContent = Math.floor(current);
+    }, 16);
+}
+
+function initializeCounters() {
+    const cards = document.querySelectorAll('.service-card');
+    
+    cards.forEach(card => {
+        let countersAnimated = false;
+        
+        card.addEventListener('mouseenter', function() {
+            if (!countersAnimated) {
+                const statNumbers = card.querySelectorAll('.stat-number');
+                statNumbers.forEach(stat => {
+                    const target = parseInt(stat.dataset.target);
+                    if (target) {
+                        animateCounter(stat, target);
+                    }
+                });
+                countersAnimated = true;
+                
+                // Reset after a delay
+                setTimeout(() => {
+                    countersAnimated = false;
+                }, 5000);
+            }
+        });
+    });
+}
+
+// ==========================================
+// LOGOUT FUNCTIONS
+// ==========================================
+
+function handleLogout(event) {
+    event.preventDefault();
+    showLogoutMessage();
+}
+
+function showLogoutMessage() {
+    const logoutMessage = document.getElementById('logoutMessage');
+    const loadingProgress = document.getElementById('loadingProgress');
+    
+    if (logoutMessage) {
+        logoutMessage.classList.add('active');
+        
+        // Start loading bar animation
+        setTimeout(() => {
+            if (loadingProgress) {
+                loadingProgress.style.width = '100%';
+            }
+        }, 100);
+        
+        // Hide message and redirect after 3 seconds
+        setTimeout(() => {
+            logoutMessage.classList.remove('active');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 300);
+        }, 3000);
+    }
+}
+
+// ==========================================
+// UTILITY FUNCTIONS
+// ==========================================
+
+function toggleService(card) {
+    if (card) {
+        card.classList.toggle('active');
+    }
+}
+
+function bookConsultation() {
+    alert('Booking consultation... This would integrate with your booking system.');
+}
+
+function startChat() {
+    alert('Starting chat... This would open your chat interface.');
+}
+
+// ==========================================
+// EVENT LISTENERS AND INITIALIZATION
+// ==========================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Load last active section from localStorage
+    const lastSection = getLastActiveSection();
+    loadActiveSection(lastSection);
+    
+    // Set up all event listeners
+    setupEventListeners();
+    
+    // Initialize animations and effects
+    initializeAnimations();
+});
+
+function getLastActiveSection() {
+    try {
+        return localStorage.getItem('activeSection') || 'home';
+    } catch (e) {
+        console.warn('localStorage not available:', e);
+        return 'home';
+    }
+}
+
+function loadActiveSection(section) {
+    switch (section) {
+        case 'services':
+            showServices();
+            break;
+        case 'doctors':
+            showDoctors();
+            break;
+        case 'about':
+            showAbout();
+            break;
+        default:
+            showHome();
+    }
+}
+
+function setupEventListeners() {
+    setupModalEventListeners();
+    setupVisualEffects();
+    setupStarRating();
+}
+
+function setupModalEventListeners() {
+    const modalIds = ['modalOverlay', 'doctorModal', 'bookingModal', 'contactModal'];
+    
+    modalIds.forEach(modalId => {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal(modalId);
+                }
+            });
+            
+            // Close modal with close button
+            modal.addEventListener('click', function(e) {
+                if (e.target.classList.contains('close') || e.target.closest('.close')) {
+                    closeModal(modalId);
+                }
+            });
+        }
+    });
+
+    // Keyboard event listeners
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            modalIds.forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (modal && modal.classList.contains('active')) {
+                    closeModal(modalId);
+                }
+            });
+        }
+    });
+}
+
+function setupVisualEffects() {
+    // Mouse tracking for service cards
+    document.querySelectorAll('.service-card, .about-card, .doctor-card').forEach(card => {
+        card.addEventListener('mouseenter', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            card.style.setProperty('--mouse-x', x + 'px');
+            card.style.setProperty('--mouse-y', y + 'px');
+        });
+    });
+
+    // Scroll header effect
+    window.addEventListener('scroll', () => {
+        const header = document.getElementById('header');
+        if (header) {
+            header.classList.toggle('scrolled', window.scrollY > 100);
+        }
+    });
+}
+
+function setupStarRating() {
+    const stars = document.querySelectorAll('.star');
+    
+    stars.forEach(star => {
+        star.addEventListener('click', function(e) {
+            e.stopPropagation();
+            console.log('Star clicked - implement rating system');
+        });
+    });
+}
+
+function initializeAnimations() {
+    initializeCounters();
+    setupIntersectionObserver();
+}
+
+function setupIntersectionObserver() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationPlayState = 'running';
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.service-card, .about-card, .doctor-card').forEach(card => {
+        observer.observe(card);
+    });
+}
+
+// ==========================================
+// GLOBAL FUNCTION EXPORTS
+// ==========================================
+
+// Make functions available globally for HTML onclick handlers
+window.showHome = showHome;
+window.showServices = showServices;
+window.showDoctors = showDoctors;
+window.showAbout = showAbout;
+window.openDoctorModal = openDoctorModal;
+window.openBookingModal = openBookingModal;
+window.openContactModal = openContactModal;
+window.closeModal = closeModal;
+window.openModal = openModal;
+window.toggleService = toggleService;
+window.submitBooking = submitBooking;
+window.handleLogout = handleLogout;
+window.showLogoutMessage = showLogoutMessage;
+window.bookConsultation = bookConsultation;
+window.startChat = startChat;
+
+// Add this to your existing JavaScript file
+
+// Chatbox data for each service
+const chatbotData = {
+    contraceptive: {
+        title: "Contraceptive Assistant",
+        questions: [
+            {
+                question: "What contraceptive options do you offer?",
+                answer: "We offer smart contraceptive pills, next-generation IUDs, hormonal implants, patches, and barrier methods. All options come with personalized medical guidance."
+            },
+            {
+                question: "How effective are your contraceptive methods?",
+                answer: "Our contraceptive methods have a 95-99% effectiveness rate when used correctly. We provide detailed instructions and ongoing support to ensure optimal effectiveness."
+            },
+            {
+                question: "Are there any side effects?",
+                answer: "Side effects vary by method and individual. Common side effects include mild spotting, mood changes, or breast tenderness. We monitor you closely and adjust as needed."
+            },
+            {
+                question: "How much do contraceptive services cost?",
+                answer: "Costs vary by method: Pills ($30-80/month), IUDs ($500-1200 one-time), Implants ($800-1300). We accept most insurance plans and offer payment plans."
+            },
+            {
+                question: "Can I switch between methods?",
+                answer: "Yes! You can switch methods anytime. We'll help you transition safely and choose the best option for your current needs and lifestyle."
+            }
+        ]
+    },
+    wellness: {
+        title: "Wellness Counseling Assistant",
+        questions: [
+            {
+                question: "What types of therapy do you offer?",
+                answer: "We offer individual therapy, couples counseling, group sessions, CBT, mindfulness-based therapy, and specialized women's wellness programs."
+            },
+            {
+                question: "How long are therapy sessions?",
+                answer: "Standard sessions are 50 minutes. We also offer 90-minute intensive sessions and 25-minute check-ins based on your needs."
+            },
+            {
+                question: "Do you offer online therapy?",
+                answer: "Yes! We provide secure video sessions, phone consultations, and text-based therapy options for maximum flexibility and accessibility."
+            },
+            {
+                question: "How often should I attend sessions?",
+                answer: "Most clients start with weekly sessions. As you progress, we may adjust to bi-weekly or monthly sessions based on your goals and progress."
+            },
+            {
+                question: "Is my information confidential?",
+                answer: "Absolutely. All sessions are completely confidential and HIPAA-compliant. We only share information with your explicit consent or in rare legal circumstances."
+            }
+        ]
+    },
+    screening: {
+        title: "Health Screening Assistant",
+        questions: [
+            {
+                question: "What tests are included in a health check-up?",
+                answer: "Our comprehensive check-up includes blood work, vital signs, cancer screenings, heart health assessment, bone density, and customized tests based on your age and risk factors."
+            },
+            {
+                question: "How often should I get screened?",
+                answer: "We recommend annual check-ups for most adults. High-risk individuals may need more frequent screening. We'll create a personalized schedule for you."
+            },
+            {
+                question: "How long do results take?",
+                answer: "Most basic results are available same-day. Complex tests may take 3-5 business days. We'll notify you immediately if anything requires urgent attention."
+            },
+            {
+                question: "Do I need to fast before testing?",
+                answer: "Some tests require 8-12 hours of fasting. We'll provide specific instructions when you book. Water is usually allowed during fasting periods."
+            },
+            {
+                question: "What happens if abnormal results are found?",
+                answer: "We'll contact you within 24 hours to discuss results and next steps. Our team will coordinate with specialists if needed and provide ongoing support."
+            }
+        ]
+    },
+    prebiotics: {
+        title: "Prebiotics Assistant",
+        questions: [
+            {
+                question: "What are prebiotics and how do they work?",
+                answer: "Prebiotics are specialized fibers that feed beneficial gut bacteria. They improve digestion, boost immunity, enhance nutrient absorption, and support overall gut health."
+            },
+            {
+                question: "How long before I see results?",
+                answer: "Most people notice improvements in 1-2 weeks. Digestive benefits may appear sooner, while immune and energy benefits typically develop over 4-6 weeks."
+            },
+            {
+                question: "Are there any side effects?",
+                answer: "Some people experience mild bloating or gas initially as your gut adjusts. These symptoms typically resolve within a few days as your microbiome adapts."
+            },
+            {
+                question: "Can I take prebiotics with medications?",
+                answer: "Prebiotics are generally safe with most medications. However, we recommend consulting our specialists, especially if you take antibiotics or have digestive conditions."
+            },
+            {
+                question: "How do I know which prebiotic is right for me?",
+                answer: "We provide personalized assessments based on your gut health, diet, lifestyle, and health goals. Our 30-day program includes ongoing adjustments and monitoring."
+            }
+        ]
+    }
+};
+
+// Function to open chatbox
+function openChatbox(serviceType) {
+    const chatData = chatbotData[serviceType];
+    if (!chatData) return;
+    
+    // Create chatbox HTML
+    const chatboxHTML = `
+        <div id="chatboxOverlay" class="chatbox-overlay active">
+            <div class="chatbox-container">
+                <div class="chatbox-header">
+                    <h3>${chatData.title}</h3>
+                    <button class="chatbox-close" onclick="closeChatbox()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="chatbox-content">
+                    <div class="chatbox-messages" id="chatboxMessages">
+                        <div class="bot-message">
+                            <div class="message-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-content">
+                                Hello! I'm here to help you with questions about our ${chatData.title.replace(' Assistant', '')} services. Click on any question below or type your own!
+                            </div>
+                        </div>
+                        
+                        <div class="quick-questions">
+                            <h4>Frequently Asked Questions:</h4>
+                            ${chatData.questions.map((item, index) => `
+                                <button class="quick-question" onclick="askQuestion('${serviceType}', ${index})">
+                                    ${item.question}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="chatbox-input">
+                        <input type="text" id="chatInput" placeholder="Type your question..." onkeypress="handleChatInput(event, '${serviceType}')">
+                        <button onclick="sendCustomMessage('${serviceType}')" class="send-btn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add to body
+    document.body.insertAdjacentHTML('beforeend', chatboxHTML);
+    document.body.style.overflow = 'hidden';
+}
+
+// Function to close chatbox
+function closeChatbox() {
+    const overlay = document.getElementById('chatboxOverlay');
+    if (overlay) {
+        overlay.remove();
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// Function to handle predefined questions
+function askQuestion(serviceType, questionIndex) {
+    const chatData = chatbotData[serviceType];
+    const question = chatData.questions[questionIndex];
+    
+    const messagesContainer = document.getElementById('chatboxMessages');
+    
+    // Add user message
+    const userMessage = `
+        <div class="user-message">
+            <div class="message-content">${question.question}</div>
+            <div class="message-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+        </div>
+    `;
+    
+    // Add bot response
+    const botMessage = `
+        <div class="bot-message">
+            <div class="message-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="message-content">${question.answer}</div>
+        </div>
+    `;
+    
+    messagesContainer.insertAdjacentHTML('beforeend', userMessage);
+    
+    // Add typing indicator
+    const typingIndicator = `
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="message-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    `;
+    
+    messagesContainer.insertAdjacentHTML('beforeend', typingIndicator);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    // Remove typing indicator and add response after delay
+    setTimeout(() => {
+        document.getElementById('typingIndicator')?.remove();
+        messagesContainer.insertAdjacentHTML('beforeend', botMessage);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }, 1500);
+}
+
+// Function to handle custom input
+function handleChatInput(event, serviceType) {
+    if (event.key === 'Enter') {
+        sendCustomMessage(serviceType);
+    }
+}
+
+// Function to send custom message
+function sendCustomMessage(serviceType) {
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    const messagesContainer = document.getElementById('chatboxMessages');
+    
+    // Add user message
+    const userMessage = `
+        <div class="user-message">
+            <div class="message-content">${message}</div>
+            <div class="message-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+        </div>
+    `;
+    
+    messagesContainer.insertAdjacentHTML('beforeend', userMessage);
+    input.value = '';
+    
+    // Generate bot response
+    const botResponse = generateBotResponse(message, serviceType);
+    
+    // Add typing indicator
+    const typingIndicator = `
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="message-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    `;
+    
+    messagesContainer.insertAdjacentHTML('beforeend', typingIndicator);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    // Remove typing indicator and add response after delay
+    setTimeout(() => {
+        document.getElementById('typingIndicator')?.remove();
+        const botMessage = `
+            <div class="bot-message">
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content">${botResponse}</div>
+            </div>
+        `;
+        messagesContainer.insertAdjacentHTML('beforeend', botMessage);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }, 1500);
+}
+
+// Function to generate bot responses for custom messages
+function generateBotResponse(message, serviceType) {
+    const lowercaseMessage = message.toLowerCase();
+    
+    // Common keywords and responses
+    const responses = {
+        appointment: "To book an appointment, please click the 'Book Now' button on our service card or call us at (555) 123-4567. We offer same-day appointments for urgent needs.",
+        cost: "Our pricing varies by service. We accept most insurance plans and offer flexible payment options. Contact us for detailed pricing information specific to your needs.",
+        insurance: "We accept most major insurance plans including Blue Cross, Aetna, Cigna, and Medicare. Please bring your insurance card to verify coverage.",
+        emergency: "For medical emergencies, please call 911 or go to your nearest emergency room. For urgent but non-emergency issues, we offer same-day appointments.",
+        location: "We're located at 123 Medical Drive, Suite 456. We also offer telehealth services for your convenience.",
+        hours: "We're open Monday-Friday 8AM-6PM, Saturday 9AM-4PM. Emergency consultations are available 24/7.",
+        default: "I understand your question about our services. For detailed information, I recommend speaking with one of our specialists. You can book a consultation using the 'Book Now' button or call us at (555) 123-4567."
+    };
+    
+    // Check for keywords
+    if (lowercaseMessage.includes('appointment') || lowercaseMessage.includes('book') || lowercaseMessage.includes('schedule')) {
+        return responses.appointment;
+    } else if (lowercaseMessage.includes('cost') || lowercaseMessage.includes('price') || lowercaseMessage.includes('how much')) {
+        return responses.cost;
+    } else if (lowercaseMessage.includes('insurance') || lowercaseMessage.includes('coverage')) {
+        return responses.insurance;
+    } else if (lowercaseMessage.includes('emergency') || lowercaseMessage.includes('urgent')) {
+        return responses.emergency;
+    } else if (lowercaseMessage.includes('location') || lowercaseMessage.includes('where') || lowercaseMessage.includes('address')) {
+        return responses.location;
+    } else if (lowercaseMessage.includes('hours') || lowercaseMessage.includes('open') || lowercaseMessage.includes('time')) {
+        return responses.hours;
+    } else {
+        return responses.default;
+    }
+}
+
+// Update your existing startChat function
+function startChat(serviceType) {
+    event.stopPropagation();
+    openChatbox(serviceType);
+}
+
+// Add event listeners for chat buttons
+document.addEventListener('DOMContentLoaded', function() {
+    // Update your existing quick action buttons to include the service type
+    const quickActions = document.querySelectorAll('.quick-actions');
+    quickActions.forEach((actionContainer, index) => {
+        const serviceTypes = ['contraceptive', 'wellness', 'screening', 'prebiotics'];
+        const serviceType = serviceTypes[index];
+        
+        // Find chat/message buttons and update their onclick
+        const chatButtons = actionContainer.querySelectorAll('.quick-btn');
+        chatButtons.forEach(button => {
+            const buttonText = button.textContent.toLowerCase();
+            if (buttonText.includes('chat') || buttonText.includes('message') || buttonText.includes('ask') || buttonText.includes('info')) {
+                button.onclick = function(event) {
+                    event.stopPropagation();
+                    openChatbox(serviceType);
+                };
+            }
+        });
+    });
+});
+
+
+
+</script>
+
+</body>
+</html>
